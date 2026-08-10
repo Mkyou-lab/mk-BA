@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Signal Pro — Pocket Option</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+</head>
+<body>
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-circle">
+        <span class="material-icons-round">auto_graph</span>
+      </div>
+      <div class="logo-info">
+        <span class="logo-name">AI SIGNAL PRO</span>
+        <span class="logo-sub">Pocket Option Bot</span>
+      </div>
+    </div>
+
+    <!-- Connection Status -->
+    <div class="sidebar-section">
+      <div class="section-title">CONNECTION</div>
+      <div class="connection-status" id="connection-status">
+        <span class="status-dot offline" id="status-dot"></span>
+        <span class="status-text" id="status-text">Disconnected</span>
+      </div>
+      <button class="btn-connect" id="btn-connect" onclick="connectBroker()">
+        <span class="material-icons-round">power</span>
+        CONNECT TO POCKET OPTION
+      </button>
+    </div>
+
+    <!-- Account Info -->
+    <div class="sidebar-section" id="account-section" style="display:none;">
+      <div class="section-title">ACCOUNT</div>
+      <div class="account-card">
+        <div class="account-type" id="account-type">DEMO</div>
+        <div class="account-balance" id="account-balance">$0.00</div>
+      </div>
+    </div>
+
+    <!-- Trading Controls -->
+    <div class="sidebar-section">
+      <div class="section-title">TRADING SETTINGS</div>
+
+      <div class="form-group">
+        <label>Currency Pair</label>
+        <select id="currency-pair">
+          <optgroup label="💱 Forex Majors">
+            <option value="EUR/USD" selected>EUR/USD</option>
+            <option value="GBP/USD">GBP/USD</option>
+            <option value="USD/JPY">USD/JPY</option>
+            <option value="USD/CHF">USD/CHF</option>
+            <option value="AUD/USD">AUD/USD</option>
+            <option value="NZD/USD">NZD/USD</option>
+            <option value="USD/CAD">USD/CAD</option>
+          </optgroup>
+          <optgroup label="💱 Forex Crosses">
+            <option value="EUR/GBP">EUR/GBP</option>
+            <option value="EUR/JPY">EUR/JPY</option>
+            <option value="GBP/JPY">GBP/JPY</option>
+            <option value="AUD/JPY">AUD/JPY</option>
+            <option value="EUR/AUD">EUR/AUD</option>
+            <option value="CHF/JPY">CHF/JPY</option>
+          </optgroup>
+          <optgroup label="🪙 Crypto">
+            <option value="BTC/USD">BTC/USD</option>
+            <option value="ETH/USD">ETH/USD</option>
+            <option value="LTC/USD">LTC/USD</option>
+          </optgroup>
+          <optgroup label="🌙 OTC Pairs">
+            <option value="EUR/USD (OTC)">EUR/USD (OTC)</option>
+            <option value="GBP/USD (OTC)">GBP/USD (OTC)</option>
+            <option value="USD/JPY (OTC)">USD/JPY (OTC)</option>
+            <option value="AUD/CAD (OTC)">AUD/CAD (OTC)</option>
+            <option value="EUR/GBP (OTC)">EUR/GBP (OTC)</option>
+            <option value="NZD/USD (OTC)">NZD/USD (OTC)</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Duration</label>
+          <select id="duration">
+            <option value="5">5 Seconds</option>
+            <option value="10">10 Seconds</option>
+            <option value="15">15 Seconds</option>
+            <option value="30">30 Seconds</option>
+            <option value="60" selected>1 Minute</option>
+            <option value="120">2 Minutes</option>
+            <option value="180">3 Minutes</option>
+            <option value="300">5 Minutes</option>
+            <option value="600">10 Minutes</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Timeframe</label>
+          <select id="timeframe">
+            <option value="5">5s</option>
+            <option value="10">10s</option>
+            <option value="15">15s</option>
+            <option value="30">30s</option>
+            <option value="60" selected>1m</option>
+            <option value="300">5m</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Analysis Strategy</label>
+        <select id="strategy">
+          <option value="auto" selected>🤖 Auto — All Indicators</option>
+          <option value="scalping">⚡ Scalping (Fast)</option>
+          <option value="trend">📈 Trend Following</option>
+          <option value="reversal">🔄 Reversal Detection</option>
+          <option value="momentum">🚀 Momentum</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="sidebar-section">
+      <button class="btn-action btn-start" id="btn-start" onclick="startAnalysis()">
+        <span class="material-icons-round">play_circle</span>
+        START ANALYSIS
+      </button>
+      <button class="btn-action btn-stop" id="btn-stop" onclick="stopAnalysis()" style="display:none;">
+        <span class="material-icons-round">stop_circle</span>
+        STOP ANALYSIS
+      </button>
+    </div>
+
+    <!-- Data Source -->
+    <div class="sidebar-section">
+      <div class="section-title">DATA SOURCE</div>
+      <div class="data-source" id="data-source">
+        <span class="material-icons-round">cloud_off</span>
+        <span>No data feed</span>
+      </div>
+      <div class="candle-count">
+        Candles: <strong id="candle-count">0</strong>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <span>AI Signal Pro v3.0</span>
+    </div>
+  </aside>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main id="main-content">
+
+    <!-- Top Signal Bar -->
+    <header id="signal-header">
+      <div class="signal-card-main" id="signal-card-main">
+        <div class="signal-left">
+          <div class="signal-pair" id="signal-pair">EUR/USD</div>
+          <div class="signal-price" id="signal-price">--</div>
+          <div class="signal-time" id="signal-time">--:--:--</div>
+        </div>
+        <div class="signal-center">
+          <div class="signal-arrow-wrap" id="signal-arrow-wrap">
+            <span class="material-icons-round" id="signal-arrow-icon">schedule</span>
+          </div>
+          <div class="signal-label" id="signal-label">WAITING</div>
+          <div class="signal-confidence-text" id="signal-confidence-text">Confidence: 0%</div>
+        </div>
+        <div class="signal-right">
+          <div class="score-block buy">
+            <span class="score-title">BUY SCORE</span>
+            <span class="score-num" id="buy-score-num">0.00</span>
+          </div>
+          <div class="score-block sell">
+            <span class="score-title">SELL SCORE</span>
+            <span class="score-num" id="sell-score-num">0.00</span>
+          </div>
+        </div>
+      </div>
+      <div class="confidence-track">
+        <div class="confidence-fill" id="confidence-fill" style="width:0%"></div>
+      </div>
+    </header>
+
+    <!-- Dashboard Grid -->
+    <div class="dashboard-grid">
+
+      <!-- Indicators Panel -->
+      <section class="panel indicators-panel">
+        <div class="panel-title">
+          <span class="material-icons-round">analytics</span>
+          Technical Indicators
+        </div>
+        <div class="indicators-grid" id="indicators-grid">
+          <div class="ind-card" id="ind-rsi">
+            <div class="ind-icon"><span class="material-icons-round">speed</span></div>
+            <div class="ind-info">
+              <div class="ind-name">RSI (14)</div>
+              <div class="ind-val">--</div>
+            </div>
+            <div class="ind-badge neutral">--</div>
+          </div>
+          <div class="ind-card" id="ind-macd">
+            <div class="ind-icon"><span class="material-icons-round">stacked_line_chart</span></div>
+            <div class="ind-info">
+              <div class="ind-name">MACD</div>
+              <div class="ind-val">--</div>
+            </div>
+            <div class="ind-badge neutral">--</div>
+          </div>
+          <div class="ind-card" id="ind-stoch">
+            <div class="ind-icon"><span class="material-icons-round">swap_vert</span></div>
+            <div class="ind-info">
+              <div class="ind-name">Stochastic</div>
+              <div class="ind-val">K:-- D:--</div>
+            </div>
+            <div class="ind-badge neutral">--</div>
+          </div>
+          <div class="ind-card" id="ind-bb">
+            <div class="ind-icon"><span class="material-icons-round">unfold_more</span></div>
+            <div class="ind-info">
+              <div class="ind-name">Bollinger</div>
+              <div class="ind-val">--</div>
+            </div>
+            <div class="ind-badge neutral">--</div>
+          </div>
+          <div class="ind-card" id="ind-adx">
+            <div class="ind-icon"><span class="material-icons-round">trending_up</span></div>
+            <div class="ind-info">
+              <div class="ind-name">ADX</div>
+              <div class="ind-val">--</div>
+            </div>
+            <div class="ind-badge neutral">--</div>
+          </div>
+          <div class="ind-card" id="ind-ema">
+            <div class="ind-icon"><span class="material-icons-round">show_chart</span></div>
+            <div class="ind-info">
+              <div class="ind-name">EMA 9/21</div>
+              <div class="ind-val">--</div>
+            </div>
+            <div class="ind-badge neutral">--</div>
+          </div>
+          <div class="ind-card" id="ind-cci">
+            <div class="ind-icon"><span class="material-icons-round">assessment</span></div>
+            <div class="ind-info">
+              <div class="ind-name">CCI (20)</div>
+              <div class="ind-val">--</div>
+            </div>
+            <div class="ind-badge neutral">--</div>
+          </div>
+          <div class="ind-card" id="ind-williams">
+            <div class="ind-icon"><span class="material-icons-round">percent</span></div>
+            <div class="ind-info">
+              <div class="ind-name">Williams %R</div>
+              <div class="ind-val">--</div>
+            </div>
+            <div class="ind-badge neutral">--</div>
+          </div>
+          <div class="ind-card" id="ind-mfi">
+            <div class="ind-icon"><span class="material-icons-round">water_drop</span></div>
+            <div class="ind-info">
+              <div class="ind-name">MFI (14)</div>
+              <div class="ind-val">--</div>
+            </div>
+            <div class="ind-badge neutral">--</div>
+          </div>
+          <div class="ind-card" id="ind-vwap">
+            <div class="ind-icon"><span class="material-icons-round">bar_chart</span></div>
+            <div class="ind-info">
+              <div class="ind-name">VWAP</div>
+              <div class="ind-val">--</div>
+            </div>
+            <div class="ind-badge neutral">--</div>
+          </div>
+          <div class="ind-card" id="ind-ichimoku">
+            <div class="ind-icon"><span class="material-icons-round">cloud</span></div>
+            <div class="ind-info">
+              <div class="ind-name">Ichimoku</div>
+              <div class="ind-val">--</div>
+            </div>
+            <div class="ind-badge neutral">--</div>
+          </div>
+          <div class="ind-card" id="ind-atr">
+            <div class="ind-icon"><span class="material-icons-round">height</span></div>
+            <div class="ind-info">
+              <div class="ind-name">ATR (14)</div>
+              <div class="ind-val">--</div>
+            </div>
+            <div class="ind-badge neutral">--</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Patterns & Levels -->
+      <section class="panel patterns-panel">
+        <div class="panel-title">
+          <span class="material-icons-round">candlestick_chart</span>
+          Patterns & Key Levels
+        </div>
+        <div class="sub-panel">
+          <div class="sub-title">🕯 Candlestick Patterns</div>
+          <div class="patterns-list" id="patterns-list">
+            <div class="empty-state">No patterns detected</div>
+          </div>
+        </div>
+        <div class="sub-panel">
+          <div class="sub-title">📍 Support Levels</div>
+          <div class="levels-list" id="support-levels">
+            <div class="empty-state">--</div>
+          </div>
+        </div>
+        <div class="sub-panel">
+          <div class="sub-title">📍 Resistance Levels</div>
+          <div class="levels-list" id="resistance-levels">
+            <div class="empty-state">--</div>
+          </div>
+        </div>
+        <div class="sub-panel">
+          <div class="sub-title">📊 Market Trend</div>
+          <div class="trend-display" id="trend-display">
+            <span class="material-icons-round">remove</span> NEUTRAL
+          </div>
+        </div>
+      </section>
+
+      <!-- Reasons Panel -->
+      <section class="panel reasons-panel">
+        <div class="panel-title">
+          <span class="material-icons-round">psychology</span>
+          Analysis Reasons
+        </div>
+        <div class="reasons-list" id="reasons-list">
+          <div class="empty-state">Start analysis to see signals</div>
+        </div>
+      </section>
+
+      <!-- Signal History -->
+      <section class="panel history-panel">
+        <div class="panel-title">
+          <span class="material-icons-round">history</span>
+          Signal History
+          <span class="history-count" id="history-count">0</span>
+        </div>
+        <div class="history-table-wrap">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Pair</th>
+                <th>Signal</th>
+                <th>Confidence</th>
+                <th>Buy/Sell</th>
+              </tr>
+            </thead>
+            <tbody id="history-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Status Bar -->
+    <footer id="status-bar">
+      <div class="status-item">
+        <span class="material-icons-round">circle</span>
+        <span id="footer-status">Disconnected</span>
+      </div>
+      <div class="status-item">
+        <span class="material-icons-round">schedule</span>
+        <span id="footer-time">--:--:--</span>
+      </div>
+      <div class="status-item">
+        <span class="material-icons-round">storage</span>
+        <span id="footer-source">No data</span>
+      </div>
+    </footer>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
